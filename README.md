@@ -78,7 +78,7 @@ git remote add origin https://github.com/<username>/<repo-name>.git
 Example:
 
 ```bash
-git remote add origin https://github.com/shubhamagrawal17/fastapi-app.git
+git remote add origin https://github.com/swapnilshrirao9/fastapi-app.git
 ```
 
 ---
