@@ -316,18 +316,23 @@ jobs:
           python <<EOF
           import json
 
-          data = json.load(open("ai-response.json"))
+          try:
+              with open("ai-response.json") as f:
+                  raw = f.read().strip()
+              if not raw:
+                  raise ValueError("ai-response.json रिकामी आहे! टनेल पब्लिक आहे का ते तपासा.")
+              data = json.loads(raw)
+          except Exception as e:
+              print(f"Error: {e}")
+              exit(1)
+
+          # /v1/chat/completions मधून उत्तर काढण्यासाठी
           text = ""
-
-          for item in data.get("output", []):
-              for content in item.get("content", []):
-                  if content.get("type") == "output_text":
-                      text += content.get("text", "") + "\\n"
-
-          if not text:
-              text = data.get("output_text", "")
-
-          if not text:
+          if "choices" in data and len(data["choices"]) > 0:
+              text = data["choices"][0].get("message", {}).get("content", "")
+          elif "response" in data:
+              text = data.get("response", "")
+          else:
               text = json.dumps(data, indent=2)
 
           with open("ai-report.txt", "w") as f:
